@@ -1,5 +1,4 @@
-// Force dynamic rendering for this page
-export const dynamic = 'force-dynamic';
+'use client';
 
 import NavigationClient from './NavigationClient';
 
