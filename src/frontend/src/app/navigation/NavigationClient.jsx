@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, Suspense } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { LOCATION_CONFIG } from "../../lib/locationConfig";
@@ -8,10 +8,10 @@ import websocketClient from "../../lib/websocketClient";
 
 const Map = dynamic(() => import("../../components/Map"), { ssr: false });
 
-function NavigationContent() {
+export default function NavigationClient() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  
+
   // Route info from URL params
   const routeId = searchParams.get("routeId");
   const routeName = searchParams.get("name");
@@ -19,7 +19,7 @@ function NavigationContent() {
   const routeDistance = searchParams.get("distance");
   const routeTime = searchParams.get("time");
   const routeSafety = searchParams.get("safety");
-  
+
   // Navigation state
   const [currentPosition, setCurrentPosition] = useState(null);
   const [snappedPosition, setSnappedPosition] = useState(null); // Position snapped to route
@@ -30,13 +30,17 @@ function NavigationContent() {
   const [distanceToNextTurn, setDistanceToNextTurn] = useState(0);
   const [heading, setHeading] = useState(0);
   const [hasArrived, setHasArrived] = useState(false);
-  const [totalDistanceRemaining, setTotalDistanceRemaining] = useState(parseFloat(routeDistance) || 0);
-  const [estimatedTimeRemaining, setEstimatedTimeRemaining] = useState(parseInt(routeTime) || 0);
+  const [totalDistanceRemaining, setTotalDistanceRemaining] = useState(
+    parseFloat(routeDistance) || 0
+  );
+  const [estimatedTimeRemaining, setEstimatedTimeRemaining] = useState(
+    parseInt(routeTime) || 0
+  );
   const [routeProgress, setRouteProgress] = useState(0); // Percentage completed
   const [isOffRoute, setIsOffRoute] = useState(false); // User too far from route
   const [nearbyHazards, setNearbyHazards] = useState([]); // Hazards along route
   const [hazardAlerts, setHazardAlerts] = useState([]); // Active hazard warnings
-  
+
   const watchIdRef = useRef(null);
   const synthesisRef = useRef(null);
   const lastPositionRef = useRef(null);
@@ -63,27 +67,31 @@ function NavigationContent() {
       const options = {
         enableHighAccuracy: true,
         timeout: 5000,
-        maximumAge: 0
+        maximumAge: 0,
       };
 
       watchIdRef.current = navigator.geolocation.watchPosition(
         (position) => {
-          const { latitude, longitude, heading: deviceHeading } = position.coords;
+          const {
+            latitude,
+            longitude,
+            heading: deviceHeading,
+          } = position.coords;
           const rawPosition = [latitude, longitude];
           setCurrentPosition(rawPosition);
 
           // Snap position to route
           if (routeCoordinates.length > 0) {
             const snapped = snapToRoute(latitude, longitude);
-            
+
             // More lenient threshold: 500m initially, 200m after first snap
             const threshold = lastPositionRef.current ? 0.2 : 0.5;
-            
+
             if (snapped && snapped.distance < threshold) {
               setSnappedPosition(snapped.position);
               setIsOffRoute(false);
               lastPositionRef.current = snapped.position;
-              
+
               // Calculate heading based on route direction
               if (snapped.segmentIndex < routeCoordinates.length - 1) {
                 const nextPoint = routeCoordinates[snapped.segmentIndex + 1];
@@ -99,12 +107,16 @@ function NavigationContent() {
               }
 
               // Update navigation progress
-              updateNavigationProgress(snapped.position[0], snapped.position[1], snapped.segmentIndex);
+              updateNavigationProgress(
+                snapped.position[0],
+                snapped.position[1],
+                snapped.segmentIndex
+              );
             } else {
               // Only show off-route if we've successfully snapped before
               if (lastPositionRef.current) {
                 setIsOffRoute(true);
-                
+
                 // Announce off-route warning (but not too frequently)
                 const now = Date.now();
                 if (now - lastAnnouncementRef.current > 10000) {
@@ -112,9 +124,9 @@ function NavigationContent() {
                   lastAnnouncementRef.current = now;
                 }
               }
-              
+
               setSnappedPosition(rawPosition);
-              
+
               if (deviceHeading !== null) {
                 setHeading(deviceHeading);
               }
@@ -156,19 +168,23 @@ function NavigationContent() {
   useEffect(() => {
     try {
       websocketClient.connect();
-      
-      websocketClient.on('nearby_hazards', (data) => {
+
+      websocketClient.on("nearby_hazards", (data) => {
         if (data.hazards && Array.isArray(data.hazards)) {
           setNearbyHazards(data.hazards);
-          
+
           // Alert on high-risk hazards within 300m
           const criticalHazards = data.hazards.filter(
-            h => (h.severity === 'high' || h.severity === 'critical') && 
-                 h.distance_meters < 300
+            (h) =>
+              (h.severity === "high" || h.severity === "critical") &&
+              h.distance_meters < 300
           );
-          
-          criticalHazards.forEach(hazard => {
-            const alertMessage = `Warning: ${hazard.hazard_type.replace('_', ' ')} ahead, ${Math.round(hazard.distance_meters)} meters away`;
+
+          criticalHazards.forEach((hazard) => {
+            const alertMessage = `Warning: ${hazard.hazard_type.replace(
+              "_",
+              " "
+            )} ahead, ${Math.round(hazard.distance_meters)} meters away`;
             addHazardAlert(alertMessage, hazard.severity);
             speak(alertMessage);
           });
@@ -176,7 +192,9 @@ function NavigationContent() {
       });
     } catch (error) {
       // WebSocket is optional - navigation works without it
-      console.log('WebSocket not available, continuing without real-time hazard updates');
+      console.log(
+        "WebSocket not available, continuing without real-time hazard updates"
+      );
     }
 
     return () => {
@@ -192,7 +210,7 @@ function NavigationContent() {
   useEffect(() => {
     if (currentPosition && isTracking) {
       const now = Date.now();
-      
+
       // Check for hazards every 15 seconds (if WebSocket is available)
       if (now - hazardCheckRef.current > 15000) {
         try {
@@ -216,14 +234,14 @@ function NavigationContent() {
       id: Date.now(),
       message,
       severity,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
-    setHazardAlerts(prev => [alert, ...prev.slice(0, 2)]); // Keep last 3 alerts
+    setHazardAlerts((prev) => [alert, ...prev.slice(0, 2)]); // Keep last 3 alerts
 
     // Auto-dismiss after 15 seconds
     setTimeout(() => {
-      setHazardAlerts(prev => prev.filter(a => a.id !== alert.id));
+      setHazardAlerts((prev) => prev.filter((a) => a.id !== alert.id));
     }, 15000);
   };
 
@@ -261,7 +279,6 @@ function NavigationContent() {
 
     let minDistance = Infinity;
     let closestPoint = null;
-    let closestIndex = 0;
     let closestSegmentIndex = 0;
 
     // Find closest point on any route segment
@@ -279,12 +296,16 @@ function NavigationContent() {
         segmentEnd[1]
       );
 
-      const dist = calculateDistance(currentLat, currentLon, snapped[0], snapped[1]);
+      const dist = calculateDistance(
+        currentLat,
+        currentLon,
+        snapped[0],
+        snapped[1]
+      );
 
       if (dist < minDistance) {
         minDistance = dist;
         closestPoint = snapped;
-        closestIndex = i;
         closestSegmentIndex = i;
       }
     }
@@ -320,7 +341,8 @@ function NavigationContent() {
       destination[1]
     );
 
-    if (distanceToDestination < 0.05) { // Within 50 meters
+    if (distanceToDestination < 0.05) {
+      // Within 50 meters
       setHasArrived(true);
       speak("You have arrived at your destination");
       return;
@@ -333,7 +355,7 @@ function NavigationContent() {
 
     // Calculate remaining distance from current position
     let remaining = 0;
-    
+
     // Distance from current position to next waypoint
     if (segmentIndex < routeCoordinates.length - 1) {
       remaining += calculateDistance(
@@ -343,7 +365,7 @@ function NavigationContent() {
         routeCoordinates[segmentIndex + 1][1]
       );
     }
-    
+
     // Add distances of all remaining segments
     for (let i = segmentIndex + 1; i < routeCoordinates.length - 1; i++) {
       remaining += calculateDistance(
@@ -361,15 +383,17 @@ function NavigationContent() {
     setEstimatedTimeRemaining(Math.round(timeRemaining));
 
     // Find next turn instruction
-    // Instructions are typically at specific waypoints
     if (currentInstructionIndex < instructions.length - 1) {
-      // Estimate next instruction point (simplified)
-      const instructionInterval = Math.floor(routeCoordinates.length / Math.max(instructions.length, 1));
-      const nextInstructionIndex = (currentInstructionIndex + 1) * instructionInterval;
-      const nextInstructionPoint = routeCoordinates[
-        Math.min(nextInstructionIndex, routeCoordinates.length - 1)
-      ];
-      
+      const instructionInterval = Math.floor(
+        routeCoordinates.length / Math.max(instructions.length, 1)
+      );
+      const nextInstructionIndex =
+        (currentInstructionIndex + 1) * instructionInterval;
+      const nextInstructionPoint =
+        routeCoordinates[
+          Math.min(nextInstructionIndex, routeCoordinates.length - 1)
+        ];
+
       if (nextInstructionPoint) {
         const distanceToNext = calculateDistance(
           currentLat,
@@ -379,17 +403,28 @@ function NavigationContent() {
         );
         setDistanceToNextTurn(distanceToNext);
 
-        // Announce upcoming turn
-        if (distanceToNext < 0.1 && distanceToNext > 0.05) { // 50-100m
-          const nextInstruction = instructions[currentInstructionIndex + 1]?.instruction || "continue";
+        if (distanceToNext < 0.1 && distanceToNext > 0.05) {
+          // 50–100m
+          const nextInstruction =
+            instructions[currentInstructionIndex + 1]?.instruction ||
+            "continue";
           const now = Date.now();
-          if (now - lastAnnouncementRef.current > 5000) { // Don't repeat within 5 seconds
-            speak(`In ${Math.round(distanceToNext * 1000)} meters, ${nextInstruction}`);
+          if (now - lastAnnouncementRef.current > 5000) {
+            speak(
+              `In ${Math.round(
+                distanceToNext * 1000
+              )} meters, ${nextInstruction}`
+            );
             lastAnnouncementRef.current = now;
           }
-        } else if (distanceToNext < 0.05) { // Less than 50m
-          const nextInstruction = instructions[currentInstructionIndex + 1]?.instruction || "Continue straight";
-          setCurrentInstructionIndex(prev => Math.min(prev + 1, instructions.length - 1));
+        } else if (distanceToNext < 0.05) {
+          // Less than 50m
+          const nextInstruction =
+            instructions[currentInstructionIndex + 1]?.instruction ||
+            "Continue straight";
+          setCurrentInstructionIndex((prev) =>
+            Math.min(prev + 1, instructions.length - 1)
+          );
           speak(nextInstruction);
           lastAnnouncementRef.current = Date.now();
         }
@@ -397,10 +432,9 @@ function NavigationContent() {
     }
   };
 
-  // Text-to-speech function
   const speak = (text) => {
     if (synthesisRef.current) {
-      synthesisRef.current.cancel(); // Cancel any ongoing speech
+      synthesisRef.current.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = 0.9;
       utterance.pitch = 1;
@@ -409,7 +443,6 @@ function NavigationContent() {
     }
   };
 
-  // Format distance
   const formatDistance = (km) => {
     if (km < 1) {
       return `${Math.round(km * 1000)} m`;
@@ -417,7 +450,6 @@ function NavigationContent() {
     return `${km.toFixed(1)} km`;
   };
 
-  // Get instruction icon
   const getInstructionIcon = (instruction) => {
     const text = instruction?.toLowerCase() || "";
     if (text.includes("left")) return "↰";
@@ -427,7 +459,6 @@ function NavigationContent() {
     return "➤";
   };
 
-  // Exit navigation
   const exitNavigation = () => {
     if (watchIdRef.current) {
       navigator.geolocation.clearWatch(watchIdRef.current);
@@ -435,8 +466,7 @@ function NavigationContent() {
     if (synthesisRef.current) {
       synthesisRef.current.cancel();
     }
-    
-    // Save the current route data to persist it when returning to suggested routes
+
     try {
       const routeData = {
         id: routeId,
@@ -447,23 +477,25 @@ function NavigationContent() {
         estimatedTime: routeTime,
         safetyRating: routeSafety,
         instructions: instructions,
-        color: routeType === "fastest" ? "#3b82f6" : "#10b981"
+        color: routeType === "fastest" ? "#3b82f6" : "#10b981",
       };
-      
-      // Store this route so it appears in suggested routes page
-      sessionStorage.setItem('last_navigated_route', JSON.stringify(routeData));
-      sessionStorage.setItem(`route_${routeId}`, JSON.stringify({
-        coordinates: routeCoordinates,
-        instructions: instructions,
-        type: routeType,
-        distance: routeDistance,
-        time: routeTime,
-        safety: routeSafety
-      }));
+
+      sessionStorage.setItem("last_navigated_route", JSON.stringify(routeData));
+      sessionStorage.setItem(
+        `route_${routeId}`,
+        JSON.stringify({
+          coordinates: routeCoordinates,
+          instructions: instructions,
+          type: routeType,
+          distance: routeDistance,
+          time: routeTime,
+          safety: routeSafety,
+        })
+      );
     } catch (error) {
-      console.error('Error saving route data:', error);
+      console.error("Error saving route data:", error);
     }
-    
+
     router.push("/suggested-routes");
   };
 
@@ -483,19 +515,23 @@ function NavigationContent() {
       {/* Hazard Alert Banners */}
       {hazardAlerts.length > 0 && (
         <div className="absolute top-0 left-0 right-0 z-50 p-4 space-y-2">
-          {hazardAlerts.map(alert => (
+          {hazardAlerts.map((alert) => (
             <div
               key={alert.id}
               className={`p-4 rounded-lg shadow-lg animate-pulse ${
-                alert.severity === 'critical' || alert.severity === 'high'
-                  ? 'bg-red-500 text-white'
-                  : 'bg-yellow-500 text-gray-900'
+                alert.severity === "critical" || alert.severity === "high"
+                  ? "bg-red-500 text-white"
+                  : "bg-yellow-500 text-gray-900"
               }`}
             >
               <div className="flex items-center justify-between">
                 <span className="font-bold text-lg">{alert.message}</span>
                 <button
-                  onClick={() => setHazardAlerts(prev => prev.filter(a => a.id !== alert.id))}
+                  onClick={() =>
+                    setHazardAlerts((prev) =>
+                      prev.filter((a) => a.id !== alert.id)
+                    )
+                  }
                   className="ml-4 text-2xl hover:opacity-70"
                 >
                   ×
@@ -526,20 +562,26 @@ function NavigationContent() {
           autoFitBounds={!isTracking}
           hazards={nearbyHazards}
           markers={[
-            // Starting point marker
             routeCoordinates.length > 0 && {
               position: routeCoordinates[0],
               color: "#10b981",
               type: "from",
-              popup: <div className="text-sm"><strong>Start</strong></div>
+              popup: (
+                <div className="text-sm">
+                  <strong>Start</strong>
+                </div>
+              ),
             },
-            // Destination marker
             routeCoordinates.length > 0 && {
               position: routeCoordinates[routeCoordinates.length - 1],
               color: "#ef4444",
               type: "to",
-              popup: <div className="text-sm"><strong>Destination</strong></div>
-            }
+              popup: (
+                <div className="text-sm">
+                  <strong>Destination</strong>
+                </div>
+              ),
+            },
           ].filter(Boolean)}
         />
       </div>
@@ -565,11 +607,14 @@ function NavigationContent() {
               <>
                 <div className="flex items-center gap-2 sm:gap-4 mb-2">
                   <div className="text-3xl sm:text-4xl">
-                    {getInstructionIcon(instructions[currentInstructionIndex]?.instruction)}
+                    {getInstructionIcon(
+                      instructions[currentInstructionIndex]?.instruction
+                    )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-base sm:text-xl md:text-2xl font-bold text-slate-800 leading-tight">
-                      {instructions[currentInstructionIndex]?.instruction || "Follow the route"}
+                      {instructions[currentInstructionIndex]?.instruction ||
+                        "Follow the route"}
                     </div>
                     {distanceToNextTurn > 0 && (
                       <div className="text-sm sm:text-lg text-blue-600 font-semibold mt-0.5">
@@ -601,7 +646,7 @@ function NavigationContent() {
                       </div>
                     </div>
                   </div>
-                  
+
                   <button
                     onClick={exitNavigation}
                     className="bg-red-600 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg hover:bg-red-700 text-xs sm:text-sm font-medium whitespace-nowrap"
@@ -609,10 +654,10 @@ function NavigationContent() {
                     Exit
                   </button>
                 </div>
-                
+
                 {/* Progress Bar */}
                 <div className="mt-2 w-full bg-gray-200 rounded-full h-1.5">
-                  <div 
+                  <div
                     className="bg-blue-600 h-1.5 rounded-full transition-all duration-500"
                     style={{ width: `${routeProgress}%` }}
                   ></div>
@@ -632,7 +677,7 @@ function NavigationContent() {
           </div>
         </div>
       )}
-      
+
       {/* Off-Route Warning */}
       {isOffRoute && isTracking && (
         <div className="absolute top-20 sm:top-24 left-2 sm:left-4 bg-orange-500 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg shadow-lg z-10 animate-pulse max-w-[calc(100%-1rem)] sm:max-w-md">
@@ -646,30 +691,36 @@ function NavigationContent() {
       {/* Bottom Panel - Upcoming Instructions */}
       <div className="absolute bottom-0 left-0 right-0 z-10 bg-gradient-to-t from-black/90 to-transparent px-2 py-2 sm:p-4">
         <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-2xl p-2 sm:p-3 max-h-36 sm:max-h-48 overflow-y-auto">
-          <h3 className="font-bold text-slate-800 mb-1.5 sm:mb-2 text-xs sm:text-sm">Next Steps</h3>
+          <h3 className="font-bold text-slate-800 mb-1.5 sm:mb-2 text-xs sm:text-sm">
+            Next Steps
+          </h3>
           <div className="space-y-1 sm:space-y-1.5">
-            {instructions.slice(currentInstructionIndex, currentInstructionIndex + 3).map((instruction, idx) => (
-              <div
-                key={idx}
-                className={`flex items-center gap-2 p-1.5 sm:p-2 rounded-lg ${
-                  idx === 0 ? "bg-blue-50 border border-blue-200" : "bg-gray-50"
-                }`}
-              >
-                <div className="text-lg sm:text-xl flex-shrink-0">
-                  {getInstructionIcon(instruction.instruction)}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-xs sm:text-sm font-medium text-slate-700 truncate">
-                    {instruction.instruction}
+            {instructions
+              .slice(currentInstructionIndex, currentInstructionIndex + 3)
+              .map((instruction, idx) => (
+                <div
+                  key={idx}
+                  className={`flex items-center gap-2 p-1.5 sm:p-2 rounded-lg ${
+                    idx === 0
+                      ? "bg-blue-50 border border-blue-200"
+                      : "bg-gray-50"
+                  }`}
+                >
+                  <div className="text-lg sm:text-xl flex-shrink-0">
+                    {getInstructionIcon(instruction.instruction)}
                   </div>
-                  {instruction.distance && (
-                    <div className="text-[10px] sm:text-xs text-gray-500">
-                      {formatDistance(instruction.distance / 1000)}
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs sm:text-sm font-medium text-slate-700 truncate">
+                      {instruction.instruction}
                     </div>
-                  )}
+                    {instruction.distance && (
+                      <div className="text-[10px] sm:text-xs text-gray-500">
+                        {formatDistance(instruction.distance / 1000)}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
       </div>
@@ -678,27 +729,16 @@ function NavigationContent() {
       <div className="absolute top-20 sm:top-24 right-2 sm:right-4 z-10">
         <div
           className={`px-2 py-1 sm:px-3 sm:py-1.5 rounded-full shadow-lg font-bold text-white text-xs sm:text-sm ${
-            routeSafety >= 7 ? "bg-green-600" : routeSafety >= 5 ? "bg-yellow-600" : "bg-red-600"
+            routeSafety >= 7
+              ? "bg-green-600"
+              : routeSafety >= 5
+              ? "bg-yellow-600"
+              : "bg-red-600"
           }`}
         >
           {routeSafety}/10
         </div>
       </div>
     </main>
-  );
-}
-
-export default function NavigationClient() {
-  return (
-    <Suspense fallback={
-      <main className="flex items-center justify-center min-h-screen bg-slate-900 text-white">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white mx-auto mb-4"></div>
-          <p>Loading navigation...</p>
-        </div>
-      </main>
-    }>
-      <NavigationContent />
-    </Suspense>
   );
 }
