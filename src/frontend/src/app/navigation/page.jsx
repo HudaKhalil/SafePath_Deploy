@@ -1,3 +1,6 @@
+// Route segment config - must be at the top
+export const dynamic = 'force-dynamic';
+
 "use client";
 
 import { useState, useEffect, useRef, Suspense } from "react";
@@ -687,9 +690,6 @@ function NavigationContent() {
     </main>
   );
 }
-
-// Prevent static generation - this page requires query parameters
-export const dynamic = 'force-dynamic';
 
 export default function NavigationPage() {
   return (
