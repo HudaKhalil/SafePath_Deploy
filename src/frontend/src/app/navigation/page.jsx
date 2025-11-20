@@ -1,5 +1,6 @@
+"use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { LOCATION_CONFIG } from "../../lib/locationConfig";
@@ -7,7 +8,7 @@ import websocketClient from "../../lib/websocketClient";
 
 const Map = dynamic(() => import("../../components/Map"), { ssr: false });
 
-export default function NavigationPage() {
+function NavigationContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   
@@ -687,3 +688,17 @@ export default function NavigationPage() {
   );
 }
 
+export default function NavigationPage() {
+  return (
+    <Suspense fallback={
+      <main className="flex items-center justify-center min-h-screen bg-slate-900 text-white">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white mx-auto mb-4"></div>
+          <p>Loading navigation...</p>
+        </div>
+      </main>
+    }>
+      <NavigationContent />
+    </Suspense>
+  );
+}
