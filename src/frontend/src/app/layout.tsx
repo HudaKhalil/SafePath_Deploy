@@ -7,7 +7,7 @@ import Footer from '../components/Footer'
 export const metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'),
   title: 'Safety Routing System',
-  description: 'Find safer routes across London with intelligent routing, community insights, and real-time hazard awareness.',
+  description: 'Find safer routes with intelligent routing, community insights, and real-time hazard awareness.',
   icons: {
     icon: '/logo.png',
     shortcut: '/logo.png',
@@ -15,7 +15,7 @@ export const metadata = {
   },
   openGraph: {
     title: 'SafePath Safety Routing System',
-    description: 'Find safer routes across London with intelligent routing, community insights, and real-time hazard awareness.',
+    description: 'Find safer routes with intelligent routing, community insights, and real-time hazard awareness.',
     images: ['/logo.png'],
   },
 }
