@@ -112,14 +112,14 @@ export default function Navbar() {
         <div className="md:hidden glass-effect mx-4 mb-4 rounded-lg">
           <nav className="flex flex-col gap-4 p-4">
             <Link href="/" onClick={() => setOpen(false)} className="text-text-secondary hover:text-accent transition-colors">Home</Link>
-            <Link href="/suggested-routes" className="text-text-secondary hover:text-accent transition-colors">Suggested Routes</Link>
-            <Link href="/report-hazards" className="text-text-secondary hover:text-accent transition-colors">Report Hazards</Link>
-            <Link href="/findBuddy" className="text-text-secondary hover:text-accent transition-colors">Find Buddy</Link>
+            <Link href="/suggested-routes" onClick={() => setOpen(false)} className="text-text-secondary hover:text-accent transition-colors">Suggested Routes</Link>
+            <Link href="/report-hazards" onClick={() => setOpen(false)} className="text-text-secondary hover:text-accent transition-colors">Report Hazards</Link>
+            <Link href="/findBuddy" onClick={() => setOpen(false)} className="text-text-secondary hover:text-accent transition-colors">Find Buddy</Link>
             
             {isLoggedIn ? (
               <div className="border-t border-white/20 pt-4 space-y-2">
                 <div className="text-text-secondary">Welcome, {user?.name || 'User'}</div>
-                <Link href="/profile" className="block text-text-secondary hover:text-accent transition-colors">Profile</Link>
+                <Link href="/profile" onClick={() => setOpen(false)} className="block text-text-secondary hover:text-accent transition-colors">Profile</Link>
                 <button 
                   onClick={() => {
                     setOpen(false);
@@ -132,8 +132,8 @@ export default function Navbar() {
               </div>
             ) : (
               <div className="border-t border-white/20 pt-4 space-y-2">
-                <Link href="/auth/login" className="block text-text-secondary hover:text-accent transition-colors">Login</Link>
-                <Link href="/auth/signup" className="block bg-accent hover:bg-accent/90 text-black px-4 py-2 rounded font-medium transition-colors text-center">Sign Up</Link>
+                <Link href="/auth/login" onClick={() => setOpen(false)} className="block text-text-secondary hover:text-accent transition-colors">Login</Link>
+                <Link href="/auth/signup" onClick={() => setOpen(false)} className="block bg-accent hover:bg-accent/90 text-black px-4 py-2 rounded font-medium transition-colors text-center">Sign Up</Link>
               </div>
             )}
           </nav>
