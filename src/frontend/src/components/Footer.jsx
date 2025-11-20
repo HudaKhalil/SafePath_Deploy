@@ -48,13 +48,13 @@ export default function Footer() {
                 Suggested Routes
               </Link>
               <Link
-                href="/hazard-reporting"
+                href="/report-hazards"
                 className="block text-gray-400 hover:text-accent transition-colors text-sm"
               >
                 Report Hazard
               </Link>
               <Link
-                href="/find-buddy"
+                href="/findBuddy"
                 className="block text-gray-400 hover:text-accent transition-colors text-sm"
               >
                 Find Buddy
