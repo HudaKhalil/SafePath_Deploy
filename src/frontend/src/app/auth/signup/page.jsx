@@ -159,7 +159,7 @@ export default function SignUp() {
             <div className="w-16 h-16 flex items-center justify-center">
               <img 
                src="/logo.png" 
-                alt="London Safety Routing Logo" 
+                alt="SafePath Safety Routing Logo" 
                 className="w-16 h-16 object-contain"
               />
             </div>

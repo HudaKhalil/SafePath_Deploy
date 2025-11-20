@@ -1,7 +1,7 @@
 {
   "name": "london-safety-routing-backend",
   "version": "1.0.0",
-  "description": "Backend API for London Safety Routing System",
+  "description": "Backend API for SafePath Safety Routing System",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
