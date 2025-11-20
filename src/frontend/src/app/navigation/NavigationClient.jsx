@@ -163,11 +163,6 @@ export default function NavigationClient() {
             </div>
           </div>
         </div>
-
-        {/* Developer Note */}
-        <div className="mt-4 text-center text-sm text-gray-400">
-          <p>💡 To re-enable navigation: uncomment code in NavigationClient.jsx</p>
-        </div>
       </div>
     </main>
   );
