@@ -104,7 +104,7 @@ export default function NavigationClient() {
       <div className="max-w-2xl w-full">
         <div className="bg-white rounded-xl shadow-2xl p-6 text-slate-800">
           <h1 className="text-2xl font-bold mb-4 text-center">
-            Navigation Page (Simplified)
+            Navigation Page
           </h1>
           
           <div className="space-y-4">
@@ -140,7 +140,7 @@ export default function NavigationClient() {
                       routeSafety >= 5 ? "text-yellow-600" : 
                       "text-red-600"
                     }`}>
-                      {routeSafety ? `${routeSafety}/10` : "N/A"}
+                      {routeSafety ? `${parseFloat(routeSafety).toFixed(1)}/10` : "N/A"}
                     </span>
                   </div>
                 </div>
@@ -152,23 +152,6 @@ export default function NavigationClient() {
               </div>
             </div>
 
-            {/* Info Message */}
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-              <div className="flex items-start gap-3">
-                <div className="text-2xl">ℹ️</div>
-                <div>
-                  <h3 className="font-semibold text-yellow-800 mb-1">
-                    Navigation Currently Disabled
-                  </h3>
-                  <p className="text-sm text-yellow-700">
-                    Full navigation features (GPS tracking, turn-by-turn directions, 
-                    real-time hazards) are temporarily disabled. This page displays 
-                    route information only.
-                  </p>
-                </div>
-              </div>
-            </div>
-
             {/* Action Buttons */}
             <div className="flex gap-3">
               <button
@@ -176,14 +159,6 @@ export default function NavigationClient() {
                 className="flex-1 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-semibold transition-colors"
               >
                 Back to Routes
-              </button>
-              
-              <button
-                disabled
-                className="flex-1 bg-gray-300 text-gray-500 px-6 py-3 rounded-lg cursor-not-allowed font-semibold"
-                title="Navigation disabled"
-              >
-                Start Navigation (Disabled)
               </button>
             </div>
           </div>
