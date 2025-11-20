@@ -1,11 +1,6 @@
-// Force dynamic rendering for this page
-export const dynamic = 'force-dynamic';
+'use client';
 
-import dynamic from 'next/dynamic';
-
-const NavigationClient = dynamic(() => import('./NavigationClient'), {
-  ssr: false,
-});
+import NavigationClient from './NavigationClient';
 
 export default function NavigationPage() {
   return <NavigationClient />;
