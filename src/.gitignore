@@ -18,5 +18,5 @@ out/
 build/
 
 # Data folders
-crimedata/
+#crimedata/
 migrations/
