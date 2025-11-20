@@ -62,4 +62,24 @@ const initializeDatabase = async () => {
 // Initialize on startup
 initializeDatabase();
 
-// Unified query interface - Postg
+// Unified query interface - PostgreSQL only
+const query = async (text, params) => {
+  return await pool.query(text, params);
+};
+
+// Test connection method - PostgreSQL only
+const testConnection = async () => {
+  try {
+    const result = await pool.query("SELECT NOW()");
+    return { success: true, database: "PostgreSQL", time: result.rows[0].now };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+};
+
+module.exports = {
+  query,
+  testConnection,
+  initializeDatabase,
+  usingSQLite: () => usingSQLite,
+};
