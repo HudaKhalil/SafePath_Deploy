@@ -105,7 +105,8 @@ app.use((err, req, res, next) => {
 const startServer = async () => {
   try {
     // Initialize database connection
-    await db.initializeDatabase();
+    //HK - Removed: database is already initialized inside ./config/database
+    //await db.initializeDatabase();
     
     // Load crime data from CSV files for safety scoring
     console.log('🔄 Loading crime data for safety scoring...');
