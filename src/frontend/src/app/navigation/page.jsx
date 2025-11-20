@@ -8,6 +8,9 @@ import websocketClient from "../../lib/websocketClient";
 
 const Map = dynamic(() => import("../../components/Map"), { ssr: false });
 
+// Force dynamic rendering for this page
+export const dynamic = 'force-dynamic';
+
 function NavigationContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
