@@ -158,7 +158,7 @@ export default function NavigationClient() {
                 onClick={exitNavigation}
                 className="flex-1 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-semibold transition-colors"
               >
-                Back to Routes
+                Back to Suggested Routes
               </button>
             </div>
           </div>
