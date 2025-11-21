@@ -22,12 +22,15 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body>
-        <Navbar />
-        <main className="min-h-screen animate-fadeIn">{children}</main>
-        <Footer />
-      </body>
-    </html>
-  )
+      <html lang="en">
+        <body className="bg-primary-light text-text-primary min-h-screen flex flex-col" tabIndex={-1}>
+          <Navbar />
+          <main className="flex-1 flex flex-col items-center justify-center w-full px-2 sm:px-4 md:px-8" role="main" aria-label="Main content">
+            {children}
+          </main>
+          <Footer />
+          <BottomNav />
+        </body>
+      </html>
+    )
 }
