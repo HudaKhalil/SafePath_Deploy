@@ -1,57 +1,105 @@
-"use client";
 import Link from "next/link";
 import { Github } from "lucide-react";
 
 export default function Footer() {
-
-  // Only show footer on desktop/wide screens
   return (
-    <footer className="hidden md:flex bg-primary-dark text-white py-8 px-8 border-t border-white/10 w-full items-center justify-between text-base" role="contentinfo">
-      {/* Nelson-style horizontal layout */}
-      <div className="flex items-center gap-6">
-        <div className="flex items-center gap-4">
-          <img src="/logo.png" alt="SafePath Logo" className="w-14 h-14 object-contain" />
-          <span className="font-bold text-2xl tracking-tight">SafePath</span>
+    <footer className="bg-primary-dark text-white py-12">
+      <div className="container mx-auto px-6">
+        <div className="grid md:grid-cols-4 gap-8">
+          {/* Logo and Description */}
+          <div className="md:col-span-2">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 flex items-center justify-center">
+                <img
+                  src="/logo.png"
+                  alt="SafePath Logo"
+                  className="w-10 h-10 object-contain"
+                />
+              </div>
+              <div className="text-white font-bold text-lg">SafePath</div>
+            </div>
+            <p className="text-gray-400 text-sm leading-relaxed max-w-md">
+              Empowering safer journeys through intelligent routing, community
+              insights, and real-time hazard awareness.
+            </p>
+            <div className="flex items-center gap-4 mt-6">
+              <a
+                href="https://github.com/KaranJoseph12/SafePath.git"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="GitHub"
+                className="inline-flex items-center justify-center h-10 w-10 rounded-full
+             text-text-secondary hover:text-accent focus:outline-none
+             focus:ring-2 focus:ring-accent/40 transition"
+              >
+                <Github className="h-5 w-5" />
+              </a>
+            </div>
+          </div>
+
+          {/* Quick Links */}
+          <div>
+            <h4 className="text-white font-semibold mb-4">Quick Links</h4>
+            <div className="space-y-3">
+              <Link
+                href="/suggested-routes"
+                className="block text-gray-400 hover:text-accent transition-colors text-sm"
+              >
+                Suggested Routes
+              </Link>
+              <Link
+                href="/report-hazards"
+                className="block text-gray-400 hover:text-accent transition-colors text-sm"
+              >
+                Report Hazard
+              </Link>
+              <Link
+                href="/findBuddy"
+                className="block text-gray-400 hover:text-accent transition-colors text-sm"
+              >
+                Find Buddy
+              </Link>
+              <Link
+                href="#"
+                className="block text-gray-400 hover:text-accent transition-colors text-sm"
+              >
+                Safety Tips
+              </Link>
+            </div>
+          </div>
+
+          {/* Legal */}
+          <div>
+            <h4 className="text-white font-semibold mb-4">Legal</h4>
+            <div className="space-y-3">
+              <Link
+                href="#"
+                className="block text-gray-400 hover:text-accent transition-colors text-sm"
+              >
+                Privacy Policy
+              </Link>
+              <Link
+                href="#"
+                className="block text-gray-400 hover:text-accent transition-colors text-sm"
+              >
+                Terms of Service
+              </Link>
+              <Link
+                href="#"
+                className="block text-gray-400 hover:text-accent transition-colors text-sm"
+              >
+                Contact Us
+              </Link>
+              <Link
+                href="#"
+                className="block text-gray-400 hover:text-accent transition-colors text-sm"
+              >
+                Support
+              </Link>
+            </div>
+          </div>
         </div>
-        <span className="text-gray-400 text-lg font-medium ml-4">Empowering safer journeys through intelligent routing, community insights, and real-time hazard awareness.</span>
       </div>
-
-      <nav aria-label="Footer navigation" className="flex items-center gap-8">
-        <Link href="/suggested-routes" className="footer-link">Suggested Routes</Link>
-        <Link href="/report-hazards" className="footer-link">Report Hazard</Link>
-        <Link href="/findBuddy" className="footer-link">Find Buddy</Link>
-        <Link href="#" className="footer-link">Safety Tips</Link>
-        <Link href="#" className="footer-link">Privacy Policy</Link>
-        <Link href="#" className="footer-link">Terms of Service</Link>
-      </nav>
-
-      <div className="flex items-center gap-4">
-        <a
-          href="https://github.com/KaranJoseph12/SafePath.git"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="GitHub"
-          className="inline-flex items-center justify-center h-12 w-12 rounded-full text-text-secondary hover:text-[#06d6a0] focus:outline-none focus:ring-2 focus:ring-[#06d6a0]/40 transition"
-        >
-          <Github className="h-7 w-7" />
-        </a>
-      </div>
-
-      <style jsx>{`
-        .footer-link {
-          font-size: 1.15rem;
-          font-weight: 500;
-          color: #e0e0e0;
-          padding: 0.5rem 1rem;
-          border-radius: 0.5rem;
-          transition: color 0.2s, background 0.2s;
-        }
-        .footer-link:hover, .footer-link:focus {
-          color: #06d6a0;
-          background: rgba(6,214,160,0.08);
-          outline: none;
-        }
-      `}</style>
     </footer>
   );
 }
