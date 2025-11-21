@@ -1,4 +1,3 @@
-
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -12,7 +11,7 @@ function Item({ icon: Icon, label, href, active }) {
         "flex flex-col items-center justify-center gap-1 px-2 py-1",
         "text-[11px] md:text-sm leading-none",
         active ? "text-sp-title" : "text-slate-500 hover:text-sp-title/80",
-        "transition-colors"
+        "transition-colors",
       ].join(" ")}
       aria-current={active ? "page" : undefined}
       aria-label={label}
@@ -33,45 +32,38 @@ export default function BottomNav() {
   };
 
   return (
+    <nav
+      className={[
+        "fixed bottom-0 left-0 right-0 z-[1001]",
+        "bg-white/95 backdrop-blur border-t border-slate-200",
+      ].join(" ")}
+      role="navigation"
+      aria-label="Primary"
+    >
+      <div className="mx-auto w-full max-w-7xl">
+        <div className="px-5 md:px-8 py-2.5 md:py-3 grid grid-cols-5 place-items-center">
+          <Item icon={Home} label="Home" href="/" active={isActive("/")} />
+          <Item
+            icon={Map}
+            label="Routes"
+            href="/suggested-routes"
+            active={isActive("/suggested-routes")}
+          />
+          <Item
+            icon={AlertTriangle}
+            label="Report"
+            href="/report-hazards"
+            active={isActive("/report-hazards")}
+          />
 
-    return (
-      <nav className="fixed bottom-0 left-0 w-full bg-white/95 backdrop-blur-md shadow-lg border-t border-gray-200 z-1002 flex md:hidden justify-around items-center py-3" role="navigation" aria-label="Bottom navigation">
-        <Link href="/" className="nav-btn" aria-label="Home">
-          <HomeIcon className="w-7 h-7" aria-hidden="true" />
-          <span className="text-[13px]">Home</span>
-        </Link>
-        <Link href="/suggested-routes" className="nav-btn" aria-label="Suggested Routes">
-          <MapIcon className="w-7 h-7" aria-hidden="true" />
-          <span className="text-[13px]">Routes</span>
-        </Link>
-        <Link href="/report-hazards" className="nav-btn" aria-label="Report Hazards">
-          <AlertTriangleIcon className="w-7 h-7" aria-hidden="true" />
-          <span className="text-[13px]">Hazards</span>
-        </Link>
-        <Link href="/findBuddy" className="nav-btn" aria-label="Find Buddy">
-          <UsersIcon className="w-7 h-7" aria-hidden="true" />
-          <span className="text-[13px]">Buddy</span>
-        </Link>
-        <style jsx>{`
-          .nav-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.25rem;
-            font-size: 0.85rem;
-            color: #333;
-            padding: 0.75rem 1.25rem;
-            border-radius: 0.75rem;
-            min-width: 44px;
-            min-height: 44px;
-            transition: color 0.2s, background 0.2s;
-          }
-          .nav-btn:hover, .nav-btn:focus {
-            color: #06d6a0;
-            background: rgba(6,214,160,0.08);
-            outline: none;
-          }
-        `}</style>
-      </nav>
-    )
-  }
+          <Item
+            icon={Users2}
+            label="Find Buddy"
+            href="/findBuddy"
+            active={isActive("/findbuddy")}
+          />
+        </div>
+      </div>
+    </nav>
+  );
+}

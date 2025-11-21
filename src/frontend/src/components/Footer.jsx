@@ -1,57 +1,112 @@
 "use client";
+
 import Link from "next/link";
-import { Github } from "lucide-react";
+import { Github, Mail } from "lucide-react";
 
 export default function Footer() {
+  const currentYear = new Date().getFullYear();
 
-  // Only show footer on desktop/wide screens
   return (
-    <footer className="hidden md:flex bg-primary-dark text-white py-8 px-8 border-t border-white/10 w-full items-center justify-between text-base" role="contentinfo">
-      {/* Nelson-style horizontal layout */}
-      <div className="flex items-center gap-6">
-        <div className="flex items-center gap-4">
-          <img src="/logo.png" alt="SafePath Logo" className="w-14 h-14 object-contain" />
-          <span className="font-bold text-2xl tracking-tight">SafePath</span>
+    <footer
+      className="hidden md:block py-16"
+      style={{
+        backgroundColor: "#0f172a",
+      }}
+    >
+      <div className="container mx-auto px-4 md:px-6 max-w-4xl">
+        {/* Centered Layout */}
+        <div className="flex flex-col items-center text-center space-y-8">
+          {/* Social Links - Centered at top */}
+          <div className="flex items-center justify-center gap-6">
+            <a
+              href="https://github.com/KaranJoseph12/SafePath.git"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="GitHub Repository"
+              className="inline-flex items-center justify-center h-14 w-14 rounded-full transition-all"
+              style={{
+                backgroundColor: "#ffffff",
+                color: "#0f172a",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = "#06d6a0";
+                e.currentTarget.style.color = "#ffffff";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "#ffffff";
+                e.currentTarget.style.color = "#0f172a";
+              }}
+            >
+              <Github className="h-7 w-7" />
+            </a>
+
+            <a
+              href="mailto:support@safepath.app"
+              aria-label="Email Support"
+              className="inline-flex items-center justify-center h-14 w-14 rounded-full transition-all"
+              style={{
+                backgroundColor: "#ffffff",
+                color: "#0f172a",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = "#06d6a0";
+                e.currentTarget.style.color = "#ffffff";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "#ffffff";
+                e.currentTarget.style.color = "#0f172a";
+              }}
+            >
+              <Mail className="h-7 w-7" />
+            </a>
+          </div>
+
+          {/* Navigation Links - Horizontal centered */}
+          <div className="flex flex-wrap items-center justify-center gap-6">
+            <Link
+              href="/privacy"
+              className="text-lg transition-colors px-2"
+              style={{ color: "#94a3b8" }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "#06d6a0")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "#94a3b8")}
+            >
+              Privacy Policy
+            </Link>
+            <Link
+              href="/terms"
+              className="text-lg transition-colors px-2"
+              style={{ color: "#94a3b8" }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "#06d6a0")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "#94a3b8")}
+            >
+              Terms of Use
+            </Link>
+            <a
+              href="mailto:support@safepath.app"
+              className="text-lg transition-colors px-2"
+              style={{ color: "#94a3b8" }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "#06d6a0")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "#94a3b8")}
+            >
+              Support
+            </a>
+            <Link
+              href="/about"
+              className="text-lg transition-colors px-2"
+              style={{ color: "#94a3b8" }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "#06d6a0")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "#94a3b8")}
+            >
+              About
+            </Link>
+          </div>
+
+          {/* Copyright - Centered at bottom */}
+          <p className="text-sm" style={{ color: "#64748b" }}>
+            © {currentYear} SafePath
+          </p>
         </div>
-        <span className="text-gray-400 text-lg font-medium ml-4">Empowering safer journeys through intelligent routing, community insights, and real-time hazard awareness.</span>
       </div>
-
-      <nav aria-label="Footer navigation" className="flex items-center gap-8">
-        <Link href="/suggested-routes" className="footer-link">Suggested Routes</Link>
-        <Link href="/report-hazards" className="footer-link">Report Hazard</Link>
-        <Link href="/findBuddy" className="footer-link">Find Buddy</Link>
-        <Link href="#" className="footer-link">Safety Tips</Link>
-        <Link href="#" className="footer-link">Privacy Policy</Link>
-        <Link href="#" className="footer-link">Terms of Service</Link>
-      </nav>
-
-      <div className="flex items-center gap-4">
-        <a
-          href="https://github.com/KaranJoseph12/SafePath.git"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="GitHub"
-          className="inline-flex items-center justify-center h-12 w-12 rounded-full text-text-secondary hover:text-[#06d6a0] focus:outline-none focus:ring-2 focus:ring-[#06d6a0]/40 transition"
-        >
-          <Github className="h-7 w-7" />
-        </a>
-      </div>
-
-      <style jsx>{`
-        .footer-link {
-          font-size: 1.15rem;
-          font-weight: 500;
-          color: #e0e0e0;
-          padding: 0.5rem 1rem;
-          border-radius: 0.5rem;
-          transition: color 0.2s, background 0.2s;
-        }
-        .footer-link:hover, .footer-link:focus {
-          color: #06d6a0;
-          background: rgba(6,214,160,0.08);
-          outline: none;
-        }
-      `}</style>
     </footer>
   );
 }
